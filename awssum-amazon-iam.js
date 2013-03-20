@@ -22,7 +22,6 @@ var _ = require('underscore');
 var awssum = require('awssum');
 var amazon = require('awssum-amazon');
 var operations = require('./config.js');
-var awsSignatureV4 = require('awssum-amazon/lib/aws-signature-v4');
 
 // --------------------------------------------------------------------------------------------------------------------
 // package variables
@@ -54,7 +53,7 @@ var Iam = function(opts) {
 };
 
 // inherit from Amazon
-util.inherits(Iam, amazon.Amazon);
+util.inherits(Iam, amazon.AmazonSignatureV4);
 
 // --------------------------------------------------------------------------------------------------------------------
 // methods we need to implement from awssum.js/amazon.js
@@ -84,20 +83,15 @@ Iam.prototype.needsTarget = function() {
 
 // This service uses the AWS Signature v4.
 // Hopefully, it fulfills : http://docs.amazonwebservices.com/cloudsearch/latest/developerguide/requestauth.html
-Iam.prototype.strToSign        = awsSignatureV4.strToSign;
-Iam.prototype.signature        = awsSignatureV4.signature;
-Iam.prototype.addSignature     = awsSignatureV4.addSignature;
 Iam.prototype.addCommonOptions = function(options, args) {
     var self = this;
 
     // yes, Signature v4, but we also need the version as a parameter
     options.params.push({ 'name' : 'Version', 'value' : self.version() });
 
-    // now call the signature
-    awsSignatureV4.addCommonOptions.apply(self, [ options, args ]);
+    // now call the superclass's addCommonOptions()
+    amazon.AmazonSignatureV4.prototype.addCommonOptions.apply(self, [ options, args ]);
 };
-
-Iam.prototype.contentType      = awsSignatureV4.contentType;
 
 // --------------------------------------------------------------------------------------------------------------------
 // operations on the service
