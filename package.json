@@ -1,6 +1,6 @@
 {
     "name" : "awssum-amazon-iam",
-    "description" : "NodeJS module to talk to Amazon Identity and Access Management (IAM).",
+    "description" : "AwsSum plugin for Amazon Identity and Access Management (IAM).",
     "version" : "1.0.0",
 
     "main" : "awssum-amazon-iam.js",
